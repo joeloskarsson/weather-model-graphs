@@ -42,7 +42,7 @@ def create_keisler_graph(coords, mesh_node_distance=3, **kwargs):
             rel_max_dist=0.51,
         ),
         non_decode_g2m_connectivity_kwargs=dict(
-            rel_max_dist=1.5,
+            rel_max_dist=1.6,
         ),
         m2g_connectivity_kwargs=dict(),
         **kwargs,
@@ -104,7 +104,7 @@ def create_graphcast_graph(
             rel_max_dist=0.51,
         ),
         non_decode_g2m_connectivity_kwargs=dict(
-            rel_max_dist=1.5,
+            rel_max_dist=1.6,
         ),
         m2g_connectivity_kwargs=dict(),
         **kwargs,
@@ -171,7 +171,7 @@ def create_oskarsson_hierarchical_graph(
             rel_max_dist=0.51,
         ),
         non_decode_g2m_connectivity_kwargs=dict(
-            rel_max_dist=1.5,
+            rel_max_dist=1.6,
         ),
         m2g_connectivity_kwargs=dict(),
         **kwargs,

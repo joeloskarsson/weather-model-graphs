@@ -11,7 +11,6 @@ function uses `connect_nodes_across_graphs` to connect nodes across the componen
 
 from typing import Iterable
 
-import matplotlib.pyplot as plt
 import networkx
 import networkx as nx
 import numpy as np
@@ -200,29 +199,6 @@ def create_all_graph_components(
     zero_degree_nodes = [
         node for node, degree in dict(G_g2m.degree()).items() if degree == 0
     ]
-
-    #  print(f"zero_degree_nodes: {zero_degree_nodes}")
-    #  pos = nx.get_node_attributes(G_g2m, 'pos')
-    #  x_zero = [pos[node][0] for node in zero_degree_nodes]
-    #  y_zero = [pos[node][1] for node in zero_degree_nodes]
-
-    #  pos_mesh = nx.get_node_attributes(grid_connect_graph, 'pos')
-    #  x_mesh = [pos_mesh[node][0] for node in grid_connect_graph.nodes]
-    #  y_mesh = [pos_mesh[node][1] for node in grid_connect_graph.nodes]
-
-    #  pos_grid = nx.get_node_attributes(G_grid, 'pos')
-    #  x_grid = [pos_grid[node][0] for node in G_grid.nodes]
-    #  y_grid = [pos_grid[node][1] for node in G_grid.nodes]
-
-    #  plt.figure(figsize=(10, 8))
-    #  plt.scatter(x_zero, y_zero, color='red', label='Zero-Degree Nodes')
-    #  plt.scatter(x_mesh, y_mesh, color='blue', s=10, label='Mesh Nodes')
-    #  plt.scatter(x_grid, y_grid, color='black', s=7, label='Mesh Nodes')
-    #  plt.xlabel('X Position')
-    #  plt.ylabel('Y Position')
-    #  plt.title('Zero-Degree Nodes Scatter Plot')
-    #  plt.legend()
-    #  plt.show()
 
     assert len(zero_degree_nodes) == 0, f"Zero-degree nodes in g2m: {zero_degree_nodes}"
 
