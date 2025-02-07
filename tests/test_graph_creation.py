@@ -151,11 +151,13 @@ def test_create_irregular_grid(kind_and_num_mesh):
     num_regular = 20**2
     num_grid = num_irregular + num_regular
     # Also include regular coords to make sure each mesh node is connected
-    xy = np.concatenate((
-        test_utils.create_fake_irregular_coords(num_irregular),
-        test_utils.create_fake_xy(N=20)/20.0 # to [0,1]
+    xy = np.concatenate(
+        (
+            test_utils.create_fake_irregular_coords(num_irregular),
+            test_utils.create_fake_xy(N=20) / 20.0,  # to [0,1]
         ),
-    axis=0)
+        axis=0,
+    )
 
     fn_name = f"create_{kind}_graph"
     fn = getattr(wmg.create.archetype, fn_name)
@@ -187,6 +189,7 @@ def test_create_lat_lon(kind):
         mesh_node_distance=mesh_node_distance,
         coords_crs=coords_crs,
         graph_crs=graph_crs,
+        allow_zero_degree=True,
     )
 
 
@@ -202,13 +205,22 @@ def test_create_decode_mask(kind):
     # ~= 20 mesh nodes in bottom layer in each direction
     mesh_node_distance = 0.05
 
-    unfiltered_graph = fn(coords=xy, mesh_node_distance=mesh_node_distance)
+    unfiltered_graph = fn(
+        coords=xy,
+        mesh_node_distance=mesh_node_distance,
+        return_components=True,
+        allow_zero_degree=True,
+    )["m2g"]
 
     # Filter to only 20 / 100 grid nodes
     decode_mask = np.concatenate((np.ones(20), np.zeros(80))).astype(bool)
     filtered_graph = fn(
-        coords=xy, mesh_node_distance=mesh_node_distance, decode_mask=decode_mask
-    )
+        coords=xy,
+        mesh_node_distance=mesh_node_distance,
+        decode_mask=decode_mask,
+        return_components=True,
+        allow_zero_degree=True,
+    )["m2g"]
 
     # Check that some filtering has been performed
     assert len(filtered_graph.edges) < len(unfiltered_graph.edges)
@@ -232,4 +244,5 @@ def test_create_many_levels(kind):
         coords=xy,
         mesh_node_distance=mesh_node_distance,
         level_refinement_factor=level_refinement_factor,
+        allow_zero_degree=True,
     )

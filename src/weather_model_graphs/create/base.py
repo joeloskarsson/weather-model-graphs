@@ -45,6 +45,7 @@ def create_all_graph_components(
     graph_crs: pyproj.crs.CRS | None = None,
     decode_mask: Iterable | None = None,
     return_components: bool = False,
+    allow_zero_degree: bool = False,
 ):
     """
     Create all graph components used in creating the message-passing graph,
@@ -195,12 +196,15 @@ def create_all_graph_components(
 
     graph_components["g2m"] = G_g2m
 
-    # Assert that all nodes in g2m have degree > 0
-    zero_degree_nodes = [
-        node for node, degree in dict(G_g2m.degree()).items() if degree == 0
-    ]
+    if not allow_zero_degree:
+        # Assert that all nodes in g2m have degree > 0
+        zero_degree_nodes = [
+            node for node, degree in dict(G_g2m.degree()).items() if degree == 0
+        ]
 
-    assert len(zero_degree_nodes) == 0, f"Zero-degree nodes in g2m: {zero_degree_nodes}"
+        assert (
+            len(zero_degree_nodes) == 0
+        ), f"Zero-degree nodes in g2m: {zero_degree_nodes}"
 
     G_m2g = connect_nodes_across_graphs(
         G_source=grid_connect_graph,
