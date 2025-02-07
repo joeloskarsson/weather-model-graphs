@@ -37,7 +37,7 @@ def test_create_graph_archetype(kind):
 # list the connectivity options for g2m and m2g and the kwargs to test
 G2M_CONNECTIVITY_OPTIONS = dict(
     nearest_neighbour=[],
-    nearest_neighbours=[dict(max_num_neighbours=4), dict(max_num_neighbours=8)],
+    nearest_neighbours=[dict(max_num_neighbours=8), dict(max_num_neighbours=16)],
     within_radius=[
         dict(max_dist=3.2),
         dict(max_dist=6.4),
@@ -53,12 +53,12 @@ M2G_CONNECTIVITY_OPTIONS["containing_rectangle"] = [dict()]
 M2M_CONNECTIVITY_OPTIONS = dict(
     flat=[],
     flat_multiscale=[
-        dict(max_num_levels=3, mesh_node_distance=3, level_refinement_factor=3),
-        dict(max_num_levels=1, mesh_node_distance=5, level_refinement_factor=5),
+        dict(max_num_levels=3, mesh_node_distance=1, level_refinement_factor=3),
+        dict(max_num_levels=1, mesh_node_distance=1.5, level_refinement_factor=5),
     ],
     hierarchical=[
-        dict(max_num_levels=3, mesh_node_distance=3, level_refinement_factor=3),
-        dict(max_num_levels=None, mesh_node_distance=3, level_refinement_factor=3),
+        dict(max_num_levels=3, mesh_node_distance=1, level_refinement_factor=2),
+        dict(max_num_levels=None, mesh_node_distance=1.5, level_refinement_factor=2),
     ],
 )
 
@@ -67,7 +67,7 @@ M2M_CONNECTIVITY_OPTIONS = dict(
 @pytest.mark.parametrize("m2g_connectivity", M2G_CONNECTIVITY_OPTIONS.keys())
 @pytest.mark.parametrize("m2m_connectivity", M2M_CONNECTIVITY_OPTIONS.keys())
 def test_create_graph_generic(m2g_connectivity, g2m_connectivity, m2m_connectivity):
-    xy = test_utils.create_fake_xy(N=32)
+    xy = test_utils.create_fake_xy(N=8)
 
     for g2m_kwargs in G2M_CONNECTIVITY_OPTIONS[g2m_connectivity]:
         for m2g_kwargs in M2G_CONNECTIVITY_OPTIONS[m2g_connectivity]:
@@ -147,19 +147,15 @@ def test_create_irregular_grid(kind_and_num_mesh):
     Tests that graphs can be created for irregular layouts of grid points
     """
     kind, num_mesh = kind_and_num_mesh
-    num_grid = 100
-    xy = test_utils.create_fake_irregular_coords(num_grid - 4)
-
-    # Need to include corners if we  want to know actual size of covered area
-    xy = np.concatenate(
-        (
-            xy,
-            np.array(
-                [[0.0, 0.0], [0.0, 1.0], [1.0, 0], [1.0, 1.0]]
-            ),  # Remaining 4 nodes
+    num_irregular = 100
+    num_regular = 20**2
+    num_grid = num_irregular + num_regular
+    # Also include regular coords to make sure each mesh node is connected
+    xy = np.concatenate((
+        test_utils.create_fake_irregular_coords(num_irregular),
+        test_utils.create_fake_xy(N=20)/20.0 # to [0,1]
         ),
-        axis=0,
-    )
+    axis=0)
 
     fn_name = f"create_{kind}_graph"
     fn = getattr(wmg.create.archetype, fn_name)
